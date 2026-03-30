@@ -52,6 +52,13 @@ func main() {
 	initialSeeds = append(initialSeeds, "https://cppreference.com/")
 	initialSeeds = append(initialSeeds, "https://wiki.archlinux.org/")
 
+	// The Whitelist
+	allowedDomains := map[string]bool{
+		"cppreference.com":    true,
+		"en.cppreference.com": true, // Handle subdomains explicitly for now
+		"wiki.archlinux.org":  true,
+	}
+
 	//make a queue of string
 	var queue []CrawlNode
 
@@ -106,6 +113,16 @@ func main() {
 		pageLinks := extractLinks(doc, baseURL)
 
 		for _, link := range pageLinks {
+			nextLink, err := url.Parse(link)
+			if err != nil {
+				log.Println("Error while parsing link :", link)
+				continue
+			}
+
+			_, ok := allowedDomains[nextLink.Hostname()]
+			if !ok {
+				continue
+			}
 			if !vis[link] {
 				vis[link] = true
 				queue = append(queue, CrawlNode{link, deep + 1})
