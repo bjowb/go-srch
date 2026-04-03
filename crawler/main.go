@@ -130,12 +130,34 @@ func isGarbageURL(link string) bool {
 		// Optional: Block non-English wiki translations (common ArchWiki pattern)
 		"(Espa", "(Fran", "(Portugu", "(Magyar)", "(Hrvatski)", "(Italiano)",
 		"(Svenska)", "(Suomi)", "(Polski)", "(%D", // %D blocks most Cyrillic/Arabic URL encodings
+		// Standard Wiki/Forum Noise
+		"action=edit", "action=history", "action=info", "oldid=", "diff=",
+		"Special:", "User:", "User_talk:", "Talk:", "Category:", "Help:",
+
+		// Translations to avoid indexing duplicates
+		"(Espa", "(Fran", "(Portugu", "(Magyar)", "(Hrvatski)", "(Italiano)",
+		"(Svenska)", "(Suomi)", "(Polski)", "(%D", "(%E",
+
+		// --- NEW: CODEFORCES TRAPS ---
+		"/profile/", "/status/", "/submission/", "/standings/",
+		"/contest/", "/gym/", "enter?back=", "?locale=",
+
+		// --- NEW: GEEKSFORGEEKS TRAPS ---
+		"/courses/", "/jobs/", "/events/", "/premium/",
+		"login", "register", "/payment/",
+
+		// --- NEW: USACO & LEETCODE TRAPS ---
+		"sign-in", "/discuss/", "/submissions/",
 	}
 
 	for _, bad := range badPaths {
 		if strings.Contains(link, bad) {
 			return true // It contains garbage, throw it away
 		}
+	}
+
+	if strings.Contains(link, "codeforces.com") && !strings.Contains(link, "/blog/entry") {
+		return true
 	}
 	return false // It looks like a clean, useful article
 }
@@ -226,14 +248,21 @@ func main() {
 	defer db.Close()
 
 	var initialSeeds []string
-	initialSeeds = append(initialSeeds, "https://cppreference.com/")
-	initialSeeds = append(initialSeeds, "https://wiki.archlinux.org/")
-
+	//initialSeeds = append(initialSeeds, "https://cp-algorithms.com/")
+	//initialSeeds = append(initialSeeds, "https://usaco.guide/")
+	//initialSeeds = append(initialSeeds, "https://www.geeksforgeeks.org/fundamentals-of-algorithms/")
+	initialSeeds = append(initialSeeds, "https://codeforces.com/blog/entry/91363") // Famous tutorial hub
+	//initialSeeds = append(initialSeeds, "https://walkccc.me/LeetCode/")
 	// The Whitelist
 	allowedDomains := map[string]bool{
-		"cppreference.com":    true,
-		"en.cppreference.com": true, // Handle subdomains explicitly for now
-		"wiki.archlinux.org":  true,
+		"cppreference.com":           true,
+		"en.cppreference.com":        true, // Handle subdomains explicitly for now
+		"cp-algorithms.com":          true,
+		"usaco.guide":                true,
+		"www.geeksforgeeks.org":      true,
+		"practice.geeksforgeeks.org": true,
+		"codeforces.com":             true,
+		"walkccc.me":                 true,
 	}
 
 	//replaced queues with channels to enable concurrency
