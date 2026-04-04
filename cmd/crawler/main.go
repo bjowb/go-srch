@@ -129,11 +129,11 @@ func main() {
 	defer db1.Close()
 
 	var initialSeeds []string
-	//initialSeeds = append(initialSeeds, "https://cp-algorithms.com/")
-	//initialSeeds = append(initialSeeds, "https://usaco.guide/")
-	//initialSeeds = append(initialSeeds, "https://www.geeksforgeeks.org/fundamentals-of-algorithms/")
-	initialSeeds = append(initialSeeds, "https://codeforces.com/blog/entry/91363") // Famous tutorial hub
-	//initialSeeds = append(initialSeeds, "https://walkccc.me/LeetCode/")
+	initialSeeds = append(initialSeeds, "https://cp-algorithms.com/")
+	initialSeeds = append(initialSeeds, "https://usaco.guide/")
+	initialSeeds = append(initialSeeds, "https://www.geeksforgeeks.org/fundamentals-of-algorithms/")
+	//initialSeeds = append(initialSeeds, "https://codeforces.com/blog/entry/91363") // Famous tutorial hub
+	initialSeeds = append(initialSeeds, "https://walkccc.me/LeetCode/")
 	// The Whitelist
 	allowedDomains := map[string]bool{
 		"cppreference.com":           true,
